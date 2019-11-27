@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/dm0275/Utils"
+	"github.com/dm0275/go-utils/files"
+	"github.com/dm0275/go-utils/slices"
 	"os"
 	"regexp"
 	"strings"
@@ -89,10 +90,10 @@ func setDefaultAccount(awsAccount string, awsAccounts []map[string]awsAccountFie
 }
 
 func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
-	awsCredsFile := utils.ReadFile(awsCredsLocation)
+	awsCredsFile := files.ReadFile(awsCredsLocation)
 	accountNames := getAccountNames(awsCredsFile)
 
-	if utils.StringInSlice(awsAccount, accountNames) {
+	if slices.StringInSlice(awsAccount, accountNames) {
 
 	} else {
 		fmt.Println("Invalid AWS profile account: " + awsAccount + "\nThe only valid options are [" + strings.Join(accountNames, ", ") + "]")
@@ -126,14 +127,6 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 }
 
 func main() {
-	//argsWithProg := os.Args
-	//argsWithoutProg := os.Args[1:]
-	//arg := os.Args[1]
-
-	//fmt.Println(argsWithProg)
-	//fmt.Println(argsWithoutProg)
-	//fmt.Println(arg)
-
 	awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default")
 	awsCredentialsFile := flag.String("awsCredentialsFile",
 		os.Getenv("HOME")+"/.aws/credentials2", "The full path to your AWS credentials file.")
