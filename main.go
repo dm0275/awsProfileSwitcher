@@ -116,9 +116,7 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 	awsCredsFile := files.ReadFile(awsCredsLocation)
 	accountNames := getProfileNames(awsCredsFile)
 
-	if slices.StringInSlice(awsAccount, accountNames) {
-
-	} else {
+	if !slices.StringInSlice(awsAccount, accountNames) {
 		fmt.Println("Invalid AWS profile account: " + awsAccount + "\nThe only valid options are [" + strings.Join(accountNames, ", ") + "]")
 		os.Exit(1)
 	}
