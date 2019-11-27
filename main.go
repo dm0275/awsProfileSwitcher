@@ -148,7 +148,7 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 	}
 
 	if updateAwsCredentialsFile(awsCredsLocation, stringBuilder) {
-		fmt.Println("Successfully set " + awsAccount + " as the default AWS profile.")
+		fmt.Println("Successfully set \"" + awsAccount + "\" as the default AWS profile.")
 	} else {
 		fmt.Println("There was an issue updating your AWS credentials file.")
 		os.Exit(1)
