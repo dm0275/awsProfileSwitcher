@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/dm0275/utils"
+	"github.com/dm0275/Utils"
 	"os"
 	"regexp"
 	"strings"
