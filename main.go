@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/dm0275/go-utils/errors"
 	"github.com/dm0275/go-utils/files"
 	"github.com/dm0275/go-utils/slices"
 	"os"
@@ -101,6 +102,12 @@ func setDefaultAccount(profile string, awsProfiles []map[string]awsAccountFields
 	return awsProfiles
 }
 
+func updateAwsCredentialsFile(awsCredentialsFile string, awsProfiles string)  {
+	fmt.Print(awsCredentialsFile)
+	updatedProfiles := files.OverwriteFile(awsCredentialsFile, awsProfiles, 0644)
+	errors.CheckError(updatedProfiles)
+}
+
 func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 	awsCredsFile := files.ReadFile(awsCredsLocation)
 	accountNames := getProfileNames(awsCredsFile)
@@ -135,7 +142,7 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 			}
 		}
 	}
-	fmt.Println(stringBuilder)
+	updateAwsCredentialsFile(awsCredsLocation, stringBuilder)
 }
 
 func main() {
