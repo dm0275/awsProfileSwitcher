@@ -1,0 +1,14 @@
+[default]
+aws_access_key_id = 12345678912345678912
+aws_secret_access_key = 1234567890abcdefghigklmnopqrstuvwxyz1234
+region = us-west-2
+
+[accountA]
+aws_access_key_id = 12345678912345678912
+aws_secret_access_key = 1234567890abcdefghigklmnopqrstuvwxyz1234
+region = us-west-2
+
+[accountB]
+aws_access_key_id = 12345678912345678912
+aws_secret_access_key = 1234567890abcdefghigklmnopqrstuvwxyz1234
+region = us-west-2
