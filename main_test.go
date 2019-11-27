@@ -20,6 +20,22 @@ aws_secret_access_key = abcdefghigklmnopqrstuvwxyz12345678901234
 region = us-west-2
 `
 
+var updatedAccounts = `[default]
+aws_access_key_id = 12345678912345678912
+aws_secret_access_key = 1234567890abcdefghigklmnopqrstuvwxyz1234
+region = us-west-2
+
+[accountA]
+aws_access_key_id = abcdefghigklmnopqrst
+aws_secret_access_key = abcdefghigklmnopqrstuvwxyz12345678901234
+region = us-west-2
+
+[accountB]
+aws_access_key_id = ABCD1234567890abcdef
+aws_secret_access_key = ABCD1234567890abcdefghigklmnopqrstuvwxyz
+region = us-west-2
+`
+
 var defaultAccounts = []map[string]awsAccountFields {
 	{"default": {region: "us-west-2", accessKeyID: "12345678912345678912", secretAccessKey: "1234567890abcdefghigklmnopqrstuvwxyz1234"}},
 	{"accountA": {region: "us-west-2", accessKeyID: "abcdefghigklmnopqrst", secretAccessKey: "abcdefghigklmnopqrstuvwxyz12345678901234"}},
@@ -103,23 +119,6 @@ func Test_parseAcctFields(t *testing.T) {
 	}
 }
 
-func Test_parseAwsCredentials(t *testing.T) {
-	type args struct {
-		awsCredsLocation string
-		awsAccount       string
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-		})
-	}
-}
-
 func Test_setDefaultAccount(t *testing.T) {
 	type args struct {
 		awsAccount  string
@@ -130,13 +129,34 @@ func Test_setDefaultAccount(t *testing.T) {
 		args args
 		want []map[string]awsAccountFields
 	}{
-		{name: "Verify_Account_B", args: args{awsAccount: "accountA", awsAccounts: defaultAccounts,}, want: updatedAccountsA},
+		{name: "Verify_Account_A", args: args{awsAccount: "accountA", awsAccounts: defaultAccounts,}, want: updatedAccountsA},
 		{name: "Verify_Account_B", args: args{awsAccount: "accountB", awsAccounts: defaultAccounts,}, want: updatedAccountsB},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := setDefaultAccount(tt.args.awsAccount, tt.args.awsAccounts); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("setDefaultAccount() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_updateAwsCredentialsFile(t *testing.T) {
+	type args struct {
+		awsCredentialsFile string
+		awsProfiles        string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{name: "Verify_Update_File", args: args{awsCredentialsFile: "./awsSampleAccounts", awsProfiles: updatedAccounts,}, want: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := updateAwsCredentialsFile(tt.args.awsCredentialsFile, tt.args.awsProfiles); got != tt.want {
+				t.Errorf("updateAwsCredentialsFile() = %v, want %v", got, tt.want)
 			}
 		})
 	}
