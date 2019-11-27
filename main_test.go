@@ -53,8 +53,8 @@ func Test_getAccountMatches(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getAccountMatches(tt.args.account, tt.args.credentialsString); got != tt.want {
-				t.Errorf("getAccountMatches() = %v, want %v", got, tt.want)
+			if got := parseAwsProfileName(tt.args.account, tt.args.credentialsString); got != tt.want {
+				t.Errorf("parseAwsProfileName() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -73,8 +73,8 @@ func Test_getAccountNames(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := getAccountNames(tt.args.credentialsString); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("getAccountNames() = %v, want %v", got, tt.want)
+			if got := getProfileNames(tt.args.credentialsString); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getProfileNames() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -96,8 +96,8 @@ func Test_parseAcctFields(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := parseAcctFields(tt.args.account, tt.args.credentialsString); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("parseAcctFields() = %v, want %v", got, tt.want)
+			if got := parseAwsProfileData(tt.args.account, tt.args.credentialsString); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("parseAwsProfileData() = %v, want %v", got, tt.want)
 			}
 		})
 	}

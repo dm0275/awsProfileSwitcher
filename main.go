@@ -17,42 +17,51 @@ type awsAccountFields struct {
 	secretAccessKey string
 }
 
-func getAccountNames(credentialsString string) []string {
-	awsAccounts := []string{}
-	if credentialsString == "" {
-		return awsAccounts
+/*
+Return the profile names from the AWS credentials file
+ */
+func getProfileNames(awsCredentialsString string) []string {
+	awsProfiles := []string{}
+	if awsCredentialsString == "" {
+		return awsProfiles
 	}
 	re := regexp.MustCompile(`\[.*\]`)
-	matches := re.FindAllString(string(credentialsString), -1)
+	matches := re.FindAllString(string(awsCredentialsString), -1)
 	for _, acct := range matches {
-		awsAccounts = append(awsAccounts, string(acct[1:len(acct)-1]))
+		awsProfiles = append(awsProfiles, string(acct[1:len(acct)-1]))
 	}
-	return awsAccounts
+	return awsProfiles
 }
 
-func getAccountMatches(account string, credentialsString string) string {
-	accountMatches := ""
-	if len(account) > 0 {
-		re := regexp.MustCompile(`(?m)^.*\[` + account + `]*\]\n(([a-z].+(\n|$))*)`)
-		match := re.FindAllString(string(credentialsString), -1)
+/*
+Parse profile name from an AWS Credentials file
+ */
+func parseAwsProfileName(profile string, awsCredentialsString string) string {
+	awsProfile := ""
+	if len(profile) > 0 {
+		re := regexp.MustCompile(`(?m)^.*\[` + profile + `]*\]\n(([a-z].+(\n|$))*)`)
+		match := re.FindAllString(string(awsCredentialsString), -1)
 		if match[0] != "" {
-			accountMatches = match[0]
+			awsProfile = match[0]
 		}
 	}
-	return accountMatches
+	return awsProfile
 }
 
-func parseAcctFields(account string, credentialsString string) map[string]awsAccountFields {
-	accounts := make(map[string]awsAccountFields)
+/*
+Parse profile data from an AWS Credentials file
+ */
+func parseAwsProfileData(profile string, awsCredentialsString string) map[string]awsAccountFields {
+	awsProfiles := make(map[string]awsAccountFields)
 
 	region := ""
 	accessKeyID := ""
 	secretAccessKey := ""
 
-	accountScanner := bufio.NewScanner(strings.NewReader(getAccountMatches(account, credentialsString)))
-	for accountScanner.Scan() {
-		if !strings.Contains(accountScanner.Text(), "[") {
-			field := strings.Split(strings.TrimSpace(accountScanner.Text()), "=")
+	profileScanner := bufio.NewScanner(strings.NewReader(parseAwsProfileName(profile, awsCredentialsString)))
+	for profileScanner.Scan() {
+		if !strings.Contains(profileScanner.Text(), "[") {
+			field := strings.Split(strings.TrimSpace(profileScanner.Text()), "=")
 			if len(field) > 1 {
 				switch acctField := strings.TrimSpace(field[0]); acctField {
 				case "aws_access_key_id":
@@ -65,33 +74,36 @@ func parseAcctFields(account string, credentialsString string) map[string]awsAcc
 			}
 		}
 	}
-	accounts[account] = awsAccountFields{region, accessKeyID, secretAccessKey}
-	return accounts
+	awsProfiles[profile] = awsAccountFields{region, accessKeyID, secretAccessKey}
+	return awsProfiles
 }
 
-func setDefaultAccount(awsAccount string, awsAccounts []map[string]awsAccountFields) []map[string]awsAccountFields {
+/*
+Given a [] of awsProfiles, this func sets the default profile
+ */
+func setDefaultAccount(profile string, awsProfiles []map[string]awsAccountFields) []map[string]awsAccountFields {
 	defaultAcct := awsAccountFields{}
-	for _, acctMap := range awsAccounts {
+	for _, acctMap := range awsProfiles {
 		for key, acct := range acctMap {
-			if key == awsAccount {
+			if key == profile {
 				defaultAcct = awsAccountFields{region:acct.region, accessKeyID:acct.accessKeyID, secretAccessKey:acct.secretAccessKey}
 			}
 		}
 	}
 
-	for _, acctMap := range awsAccounts {
+	for _, acctMap := range awsProfiles {
 		for key := range acctMap {
 			if key == "default" {
 				acctMap["default"] = defaultAcct
 			}
 		}
 	}
-	return awsAccounts
+	return awsProfiles
 }
 
 func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 	awsCredsFile := files.ReadFile(awsCredsLocation)
-	accountNames := getAccountNames(awsCredsFile)
+	accountNames := getProfileNames(awsCredsFile)
 
 	if slices.StringInSlice(awsAccount, accountNames) {
 
@@ -102,7 +114,7 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 	
 	awsAccounts := make([]map[string]awsAccountFields, 0)
 	for _, acct := range accountNames {
-		awsAccounts = append(awsAccounts, parseAcctFields(acct, awsCredsFile))
+		awsAccounts = append(awsAccounts, parseAwsProfileData(acct, awsCredsFile))
 	}
 
 	updatedAccounts := setDefaultAccount(awsAccount, awsAccounts)
