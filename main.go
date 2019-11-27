@@ -102,10 +102,14 @@ func setDefaultAccount(profile string, awsProfiles []map[string]awsAccountFields
 	return awsProfiles
 }
 
-func updateAwsCredentialsFile(awsCredentialsFile string, awsProfiles string)  {
-	fmt.Print(awsCredentialsFile)
+func updateAwsCredentialsFile(awsCredentialsFile string, awsProfiles string) bool {
 	updatedProfiles := files.OverwriteFile(awsCredentialsFile, awsProfiles, 0644)
 	errors.CheckError(updatedProfiles)
+
+	if updatedProfiles == nil {
+		return true
+	}
+	return false
 }
 
 func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
@@ -142,13 +146,19 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 			}
 		}
 	}
-	updateAwsCredentialsFile(awsCredsLocation, stringBuilder)
+
+	if updateAwsCredentialsFile(awsCredsLocation, stringBuilder) {
+		fmt.Println("Successfully set " + awsAccount + " as the default AWS profile.")
+	} else {
+		fmt.Println("There was an issue updating your AWS credentials file.")
+		os.Exit(1)
+	}
 }
 
 func main() {
 	awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default")
 	awsCredentialsFile := flag.String("awsCredentialsFile",
-		os.Getenv("HOME")+"/.aws/credentials2", "The full path to your AWS credentials file.")
+		os.Getenv("HOME")+"/.aws/credentials", "The full path to your AWS credentials file.")
 	cmdArgs := os.Args[1:]
 
 	flag.Parse()
