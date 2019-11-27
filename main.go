@@ -142,10 +142,17 @@ func main() {
 	awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default")
 	awsCredentialsFile := flag.String("awsCredentialsFile",
 		os.Getenv("HOME")+"/.aws/credentials2", "The full path to your AWS credentials file.")
+	cmdArgs := os.Args[1:]
+
 	flag.Parse()
+	if flag.NArg() > 0 {
+		*awsAccount = cmdArgs[0]
+	}
 
 	if *awsAccount == "" {
 		fmt.Println("No aws profile was passed, aws credentials was not modified")
+		flag.Usage()
+		os.Exit(1)
 	} else {
 		parseAwsCredentials(*awsCredentialsFile, *awsAccount)
 	}
