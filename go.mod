@@ -1,4 +1,4 @@
-module github.com/dm0275/AwsProfileSwitcher
+module github.com/dm0275/awsProfileSwitcher
 
 go 1.12
 
