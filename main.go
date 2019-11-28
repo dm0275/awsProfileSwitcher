@@ -154,7 +154,8 @@ func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
 }
 
 func main() {
-	awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default")
+	awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default. " +
+		"You can also pass this parameter as a command line argument. Ex. awsProfileSwitcher <account>")
 	awsCredentialsFile := flag.String("awsCredentialsFile",
 		os.Getenv("HOME")+"/.aws/credentials", "The full path to your AWS credentials file.")
 	cmdArgs := os.Args[1:]
