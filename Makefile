@@ -1,14 +1,11 @@
 .PHONY: help
 .DEFAULT_GOAL := help
 
-setup: ## Setup linter
-	go get -u golang.org/x/lint/golint/..
-
 build: ## Build awsProfileSwitcher
 	go build -v .
 
-lint: setup ## Lint
-	golint
+lint: ## Lint
+	docker run --rm -v $(pwd):/data cytopia/golint .
 
 test: ## Run unit tests
 	go test -v .

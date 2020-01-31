@@ -25,7 +25,7 @@ jobs:
         fi
 
     - name: Lint
-      run: docker run --rm -v $(pwd):/data cytopia/golint .
+      run: make lint
 
     - name: Build
       run: go build -v .
