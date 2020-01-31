@@ -115,7 +115,7 @@ func updateAwsCredentialsFile(awsCredentialsFile string, awsProfiles string) boo
 	return false
 }
 
-func parseAwsCredentials(awsCredsLocation string, awsAccount string) {
+func setAwsDefaultProfile(awsCredsLocation string, awsAccount string) {
 	awsCredsFile := files.ReadFile(awsCredsLocation)
 	accountNames := getProfileNames(awsCredsFile)
 
@@ -173,6 +173,6 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	} else {
-		parseAwsCredentials(*awsCredentialsFile, *awsAccount)
+		setAwsDefaultProfile(*awsCredentialsFile, *awsAccount)
 	}
 }
