@@ -102,6 +102,9 @@ func setDefaultAccount(profile string, awsProfiles []map[string]awsAccountFields
 	return awsProfiles
 }
 
+/*
+updateAwsCredentialsFile overwrites the AWS credentials file with the updated default profile
+ */
 func updateAwsCredentialsFile(awsCredentialsFile string, awsProfiles string) bool {
 	updatedProfiles := files.OverwriteFile(awsCredentialsFile, awsProfiles, 0644)
 	errors.CheckError(updatedProfiles)

@@ -24,6 +24,9 @@ jobs:
             dep ensure
         fi
 
+    - name: Lint
+      run: make lint
+
     - name: Build
       run: go build -v .
     
