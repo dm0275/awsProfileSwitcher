@@ -15,5 +15,5 @@ Usage of awsProfileSwitcher:
   -awsAccount string
         Pass the awsAccount that you want to set as default. You can also pass this parameter as a command line argument. Ex. awsProfileSwitcher <account>
   -awsCredentialsFile string
-        The full path to your AWS credentials file. (default "/Users/dmancill/.aws/credentials")
+        The full path to your AWS credentials file. (default "/Users/<USERNAME>/.aws/credentials")
 ```
