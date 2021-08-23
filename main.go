@@ -157,36 +157,36 @@ func setAwsDefaultProfile(awsCredsLocation string, awsAccount string) {
 }
 
 func awsCredentialsFileExists(fileName string) bool {
-	if _, err := os.Stat(fileName); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
+    if _, err := os.Stat(fileName); err != nil {
+        if os.IsNotExist(err) {
+            return false
+        }
+    }
+    return true
 }
 
 func main() {
-	awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default. " +
-		"You can also pass this parameter as a command line argument. Ex. awsProfileSwitcher <account>")
-	awsCredentialsFile := flag.String("awsCredentialsFile",
-		os.Getenv("HOME")+"/.aws/credentials", "The full path to your AWS credentials file.")
-	cmdArgs := os.Args[1:]
+    awsAccount := flag.String("awsAccount", "","Pass the awsAccount that you want to set as default. " +
+        "You can also pass this parameter as a command line argument. Ex. awsProfileSwitcher <account>")
+    awsCredentialsFile := flag.String("awsCredentialsFile",
+        os.Getenv("HOME")+"/.aws/credentials", "The full path to your AWS credentials file.")
+    cmdArgs := os.Args[1:]
 
-	flag.Parse()
-	if flag.NArg() > 0 {
-		*awsAccount = cmdArgs[0]
-	}
+    flag.Parse()
+    if flag.NArg() > 0 {
+        *awsAccount = cmdArgs[0]
+    }
 
-	if awsCredentialsFileExists(*awsCredentialsFile) {
-		if *awsAccount == "" {
-			fmt.Println("No aws profile was passed, aws credentials was not modified")
-			flag.Usage()
-			os.Exit(1)
-		} else {
-			setAwsDefaultProfile(*awsCredentialsFile, *awsAccount)
-		}
-	} else {
-		fmt.Println("AWS Credentials file (" + *awsCredentialsFile + ") does not exist.")
-		os.Exit(1)
-	}
+    if awsCredentialsFileExists(*awsCredentialsFile) {
+        if *awsAccount == "" {
+            fmt.Println("No aws profile was passed, aws credentials was not modified")
+            flag.Usage()
+            os.Exit(1)
+        } else {
+            setAwsDefaultProfile(*awsCredentialsFile, *awsAccount)
+        }
+    } else {
+        fmt.Println("AWS Credentials file (" + *awsCredentialsFile + ") does not exist.")
+        os.Exit(1)
+    }
 }
