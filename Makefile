@@ -1,8 +1,17 @@
 .PHONY: help
 .DEFAULT_GOAL := help
 
+ifndef GOOS
+	GOOS := linux
+endif
+ifndef GOARCH
+	GOARCH := amd64
+endif
+
+ENV=export CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH)
+
 build: ## Build awsProfileSwitcher
-	go build -v .
+	$(ENV) &&  go build -v .
 
 lint: ## Lint
 	docker run --rm -v $(pwd):/data cytopia/golint .
